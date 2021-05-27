@@ -1,0 +1,9 @@
+#Global
+parallelism: 1
+#Kafka
+addr: 192.168.1.1
+port: 9092
+topic: test
+key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+auto.offset.reset: latest
