@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteRepositoriesConfiguration">
+    <remote-repository>
+      <option name="id" value="datahub" />
+      <option name="name" value="datahub" />
+      <option name="url" value="https://mirrors.tencent.com/repository/maven/datahub" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="thirdparty" />
+      <option name="name" value="thirdparty" />
+      <option name="url" value="https://mirrors.tencent.com/repository/maven/thirdparty/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="tianqiong-releases" />
+      <option name="name" value="tianqiong-releases" />
+      <option name="url" value="https://mirrors.tencent.com/repository/maven/tianqiong-releases" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="tencent_public" />
+      <option name="name" value="tencent_public" />
+      <option name="url" value="https://mirrors.tencent.com/repository/maven/tencent_public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Central Repository" />
+      <option name="url" value="https://repo.maven.apache.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="tianqiong-snapshots" />
+      <option name="name" value="tianqiong-snapshots" />
+      <option name="url" value="https://mirrors.tencent.com/repository/maven/tianqiong-snapshots" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Maven Central repository" />
+      <option name="url" value="https://repo1.maven.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="datalake-release-repo" />
+      <option name="name" value="datalake.release.repo" />
+      <option name="url" value="https://mirrors.tencent.com/repository/maven/DataLake" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="mqq-release" />
+      <option name="name" value="mqq-release" />
+      <option name="url" value="https://mirrors.tencent.com/repository/maven/mqq-release/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="tencent_public_snapshots" />
+      <option name="name" value="tencent_public_snapshots" />
+      <option name="url" value="https://mirrors.tencent.com/repository/maven/tencent_public_snapshots/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="thirdparty-snapshots" />
+      <option name="name" value="thirdparty-snapshots" />
+      <option name="url" value="https://mirrors.tencent.com/repository/maven/thirdparty-snapshots/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="mqq" />
+      <option name="name" value="mqq" />
+      <option name="url" value="https://mirrors.tencent.com/repository/maven/mqq" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jboss.community" />
+      <option name="name" value="JBoss Community repository" />
+      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="fengren" />
+      <option name="name" value="fengren" />
+      <option name="url" value="https://mirrors.tencent.com/repository/maven/fengren" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="mqq-nexus" />
+      <option name="name" value="mqq-nexus" />
+      <option name="url" value="http://maven.oa.com/nexus/content/repositories/mqq/" />
+    </remote-repository>
+  </component>
+</project>
