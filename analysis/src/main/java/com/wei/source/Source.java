@@ -1,8 +1,18 @@
 package com.wei.source;
 
-import org.apache.flink.streaming.api.datastream.DataStreamSource;
 
-public interface Source {
-    //初始化环境
-    DataStreamSource<String> initEnv();
+import org.apache.flink.streaming.api.datastream.DataStream;
+
+/**
+ *
+ * @param <T>
+ * 初始化source
+ */
+public abstract class Source<T> {
+
+    /**
+     *
+     * @return
+     */
+    public abstract DataStream<T> initEnv();
 }

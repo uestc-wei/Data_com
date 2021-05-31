@@ -1,5 +1,12 @@
 #Global
 parallelism: 1
+source: kafka
+
+
+
+
+
+
 #Kafka
 addr: 192.168.1.1
 port: 9092

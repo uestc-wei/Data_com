@@ -3,11 +3,12 @@ package com.wei.feature;
 
 import com.wei.pojo.ItemViewCount;
 import com.wei.pojo.UserBehavior;
-import com.wei.source.KafkaSource;
+import com.wei.util.DataSourceFactory;
 import java.util.concurrent.TimeUnit;
 import org.apache.flink.api.common.functions.AggregateFunction;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
 import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows;
@@ -23,10 +24,8 @@ import org.apache.flink.util.Collector;
 public class GetHotItem {
 
     public static void main(String[] args) {
-        //kafkaSource
-        KafkaSource kafkaSource = new KafkaSource();
-        DataStreamSource<String> source = kafkaSource.initEnv();
-
+        //kafkaStringSource
+        DataStreamSource<String> source = DataSourceFactory.kafkaStringSourceProduce();
         /**transformation
          * 1.将字符流转成pojo
          * 2.抽取event_time
@@ -45,12 +44,15 @@ public class GetHotItem {
         ));
 
         //分组开窗聚合，得到每个窗口内的各个商品的count值
-        userBehaviorStream.filter(userBehavior -> "pv".equals(userBehavior.getBehavior()))//过滤其他行为
-                            .keyBy(UserBehavior::getItemId) //根据商品id聚合
-                            .window(SlidingEventTimeWindows.of(Time.hours(1),Time.minutes(5)))//滑动窗口
-                            .aggregate(new countItemAgg(),new WindowItemCountResult());
+        SingleOutputStreamOperator<ItemViewCount> windowAggStream = userBehaviorStream
+                .filter(userBehavior -> "pv".equals(userBehavior.getBehavior()))//过滤其他行为
+                .keyBy(UserBehavior::getItemId) //根据商品id聚合
+                .window(SlidingEventTimeWindows.of(Time.hours(1), Time.minutes(5)))//滑动窗口
+                .aggregate(new countItemAgg(), new WindowItemCountResult());
 
-        //TOP 5商品
+        //TOP n商品
+        windowAggStream.keyBy(ItemViewCount::getWindowEnd).process();
+
     }
 
     /**
@@ -86,11 +88,28 @@ public class GetHotItem {
 
         @Override
         public void apply(Long itemId, TimeWindow timeWindow, Iterable<Long> input,
-                Collector<ItemViewCount> out) throws Exception {
+                Collector<ItemViewCount> out) {
             long end = timeWindow.getEnd();
             Long count = input.iterator().next();
             out.collect(new ItemViewCount(itemId,end,count));
         }
     }
+    /**
+     * 自定义keyedProcessFunction
+     */
+     public static class TopNHotItems extends KeyedProcessFunction<Long,ItemViewCount,String>{
+         //top n
+         private Integer topSize;
+
+        @Override
+        public void processElement(ItemViewCount value, Context ctx, Collector<String> out) throws Exception {
+
+        }
+
+
+        //
+
+    }
+
 }
 
