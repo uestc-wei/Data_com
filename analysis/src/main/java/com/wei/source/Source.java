@@ -1,6 +1,7 @@
 package com.wei.source;
 
 
+import org.apache.flink.api.java.DataSet;
 import org.apache.flink.streaming.api.datastream.DataStream;
 
 /**

@@ -1,4 +1,7 @@
 import com.wei.util.ConfigUtil;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +26,21 @@ public class test {
         System.out.println("1111");
     }
     @Test
-    public void test2(){
-        Byte n=(byte)0;
-
-        System.out.println(Boolean.parseBoolean(n.toString()));
+    public void test2() throws ParseException {
+        Date date = new Date();
+        //System.out.println(date);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String format = dateFormat.format(date);
+        Date parse = dateFormat.parse(format);
+        //System.out.println(parse);
+        if (test3().equals("")) {
+            System.out.println(1111);
+        } else {
+            System.out.println(2222);
+        }
+    }
+    private String test3(){
+        return "";
     }
 }
 

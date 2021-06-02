@@ -15,7 +15,7 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
  */
 
 @NoArgsConstructor
-@AllArgsConstructor
+
 public class KafkaStringSource extends Source<String> {
 
 
@@ -33,6 +33,5 @@ public class KafkaStringSource extends Source<String> {
                 new FlinkKafkaConsumer<>(ConfigUtil.getTopic(),
                         new SimpleStringSchema(), properties));
         return kafkaSource;
-
     }
 }
