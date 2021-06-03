@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="analysis" />
         <module name="service" />
+        <module name="dataProduce" />
       </profile>
     </annotationProcessing>
   </component>

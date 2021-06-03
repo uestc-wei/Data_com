@@ -11,6 +11,7 @@
     <modules>
         <module>analysis</module>
         <module>service</module>
+        <module>dataProduce</module>
     </modules>
     <properties>
     <maven.compiler.source>8</maven.compiler.source>
@@ -80,7 +81,7 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.3.1</version>
-            <scope>test</scope>
+            <scope>DataTest</scope>
         </dependency>
 
     </dependencies>
