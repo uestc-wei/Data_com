@@ -1,4 +1,4 @@
-package com.wei.feature;
+package com.wei.feature.getHotItem;
 
 
 import com.wei.pojo.ItemViewCount;
@@ -25,13 +25,16 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter.Strategy;
 import org.apache.flink.util.Collector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- *统计最近1小时内的热门商品
+ *统计最近1小时内的热门商品,5分钟更新一次
  *指标：浏览次数PV
  */
 public class GetHotItem {
 
+    private static Logger logger = LoggerFactory.getLogger(GetHotItem.class);
     public static void main(String[] args) throws Exception {
         //kafkaStringSource
         ParameterTool startUpParameterTool = ParameterTool.fromArgs(args);

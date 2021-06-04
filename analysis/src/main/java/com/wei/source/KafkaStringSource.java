@@ -16,7 +16,7 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
 
 @NoArgsConstructor
 
-public class KafkaStringSource extends Source<String> {
+public class KafkaStringSource {
 
 
     /**

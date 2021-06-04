@@ -2,15 +2,21 @@ package com.wei.kafka;
 
 import java.util.Properties;
 import java.util.Random;
+import java.util.concurrent.Future;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProduceDataKafka {
+
+    private static Logger logger = LoggerFactory.getLogger(ProduceDataKafka.class);
     public static void main(String[] args) throws InterruptedException {
         Properties prop=new Properties();
         String topic="userBehavior";
-        prop.put("bootstrap.servers","localhost:9092");
+        prop.put("bootstrap.servers","9.135.100.240:9092");
         prop.put("key.serializer","org.apache.kafka.common.serialization.StringSerializer");
         prop.put("value.serializer","org.apache.kafka.common.serialization.StringSerializer");
         prop.put("acks","all");
@@ -19,9 +25,20 @@ public class ProduceDataKafka {
         prop.put("buffer.memory",33554432);
         Producer<String,String> producer= new
                 KafkaProducer<>(prop);
+        logger.info("开始发送数据");
         while (true) {
-            producer.send(new ProducerRecord<>(topic,"userBehavior",ProduceData.produce()));
-            Thread.sleep(100);
+            String value = ProduceData.produce();
+            System.out.println(value);
+            Future<RecordMetadata> userBehavior = producer
+                    .send(new ProducerRecord<>(topic, "userBehavior", value));
+            System.out.println("正在发送数据...");
+           if (userBehavior.isDone()){
+               System.out.println("发送数据成功！");
+            }else {
+               System.out.println("发送失败！");
+               break;
+           }
+            //Thread.sleep(100);
         }
 
     }

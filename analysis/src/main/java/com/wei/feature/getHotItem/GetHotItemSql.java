@@ -1,4 +1,4 @@
-package com.wei.feature;
+package com.wei.feature.getHotItem;
 
 
 import static org.apache.flink.table.api.Expressions.$;
