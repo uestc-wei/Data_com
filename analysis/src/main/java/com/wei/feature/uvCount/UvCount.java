@@ -1,4 +1,4 @@
-package com.wei.feature.flowCount;
+package com.wei.feature.uvCount;
 
 import com.wei.pojo.PageViewCount;
 import com.wei.pojo.UserBehavior;
@@ -15,6 +15,7 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
@@ -24,11 +25,13 @@ import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter.Strategy;
 import org.apache.flink.util.Collector;
 
-public class FlowCount {
+public class UvCount {
 
     public static void main(String[] args) throws Exception {
-        ParameterTool parameterTool = ParameterTool.fromArgs(args);
-        DataStreamSource<String> source = new DataSourceFactory(parameterTool).kafkaStringSourceProduce();
+        ParameterTool startUpParameterTool = ParameterTool.fromArgs(args);
+        StreamExecutionEnvironment env=StreamExecutionEnvironment.getExecutionEnvironment();
+        DataSourceFactory.init(startUpParameterTool);
+        DataStreamSource<String> source = DataSourceFactory.kafkaStringSource(env);
 
         //
        DataStream<UserBehavior> userBehaviorDataStream = source.map(line -> {
@@ -74,7 +77,7 @@ public class FlowCount {
         //sink
         totalResult.print();
 
-        source.getExecutionEnvironment().execute("pv count job ");
+        env.execute("pv count job ");
     }
     public static class PvCountAgg implements AggregateFunction<Tuple2<Integer,Long>,Long,Long>{
 

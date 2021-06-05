@@ -62,17 +62,13 @@ public class ConfigUtil {
         }
         return parameterTool.get("kafkaAddress");
     }
-    public static int getKafkaPort(){
-        if (canGetFromSysArgs("kafkaPort")) {
-            return startUpParameterTool.getInt("kafkaPort");
-        }
-        return parameterTool.getInt("kafkaPort");
-    }
-    public static String getTopic(){
+
+    //支持传入多个topic
+    public static String[] getTopic(){
         if (canGetFromSysArgs("topic")) {
-            return startUpParameterTool.get("topic");
+            return startUpParameterTool.get("topic").split(",");
         }
-        return parameterTool.get("topic");
+        return parameterTool.get("topic").split(",");
     }
     public static String getKeyDeserializer(){
         if (canGetFromSysArgs("key.deserializer")) {

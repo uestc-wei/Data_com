@@ -11,5 +11,11 @@
 
     <artifactId>analysis</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>3.5.1</version>
+        </dependency>
+    </dependencies>
 </project>

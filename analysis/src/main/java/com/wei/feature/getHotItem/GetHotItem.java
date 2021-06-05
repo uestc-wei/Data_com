@@ -17,6 +17,7 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
@@ -38,8 +39,9 @@ public class GetHotItem {
     public static void main(String[] args) throws Exception {
         //kafkaStringSource
         ParameterTool startUpParameterTool = ParameterTool.fromArgs(args);
-        DataStreamSource<String> source = new
-                DataSourceFactory(startUpParameterTool).kafkaStringSourceProduce();
+        StreamExecutionEnvironment env=StreamExecutionEnvironment.getExecutionEnvironment();
+        DataSourceFactory.init(startUpParameterTool);
+        DataStreamSource<String> source = DataSourceFactory.kafkaStringSource(env);
         /**transformation
          * 1.将字符流转成pojo
          * 2.抽取event_time
@@ -73,7 +75,7 @@ public class GetHotItem {
         //sink
         resultStream.print();
 
-        source.getExecutionEnvironment().execute("hot");
+        env.execute("hot");
     }
 
     /**

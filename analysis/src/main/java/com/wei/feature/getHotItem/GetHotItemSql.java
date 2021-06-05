@@ -7,9 +7,11 @@ import static org.apache.flink.table.api.Expressions.lit;
 import com.wei.pojo.UserBehavior;
 import com.wei.util.DataSourceFactory;
 import java.util.concurrent.TimeUnit;
+import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter.Strategy;
@@ -27,9 +29,10 @@ public class GetHotItemSql {
     public static void main(String[] args) throws Exception {
 
         //kafkaString source
-        ParameterTool parameterTool = ParameterTool.fromArgs(args);
-        DataStreamSource<String> source = new DataSourceFactory(parameterTool).
-                kafkaStringSourceProduce();
+        ParameterTool startUpParameterTool = ParameterTool.fromArgs(args);
+        StreamExecutionEnvironment env=StreamExecutionEnvironment.getExecutionEnvironment();
+        DataSourceFactory.init(startUpParameterTool);
+        DataStreamSource<String> source = DataSourceFactory.kafkaStringSource(env);
 
         //转换成pojo，分配时间戳和watermark
         source.map(line->{
@@ -49,7 +52,7 @@ public class GetHotItemSql {
         EnvironmentSettings tableBuildSetting = EnvironmentSettings.newInstance()
                 .useBlinkPlanner().inStreamingMode().build();
         StreamTableEnvironment tableEnv = StreamTableEnvironment
-                .create(source.getExecutionEnvironment(), tableBuildSetting);
+                .create(env, tableBuildSetting);
         //1.将流转成表 tableApi
         Table dataTable = tableEnv.fromDataStream(source,$("userId"),$("itemId"),
                 $("categoryId"),$("behavior"),$("timestamp").rowtime().as("ts"));
@@ -82,7 +85,7 @@ public class GetHotItemSql {
         tableEnv.toRetractStream(sqlResultTable,Row.class).print();*/
         tableEnv.toRetractStream(resultTable,Row.class).print();
 
-        source.getExecutionEnvironment().execute("hot-sql");
+        env.execute("hot-sql");
 
     }
 }

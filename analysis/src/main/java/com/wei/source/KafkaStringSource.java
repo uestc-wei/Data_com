@@ -1,37 +1,59 @@
 package com.wei.source;
 
 import com.wei.util.ConfigUtil;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * kafka source
  */
 
-@NoArgsConstructor
 
+@AllArgsConstructor
 public class KafkaStringSource {
-
-
-    /**
-     * 初始化kafkaStringSource
-     */
-    public DataStreamSource<String> initEnv(){
-        StreamExecutionEnvironment env=StreamExecutionEnvironment.getExecutionEnvironment();
-        Properties properties = new Properties();
-        properties.setProperty("bootstrap.servers", ConfigUtil.getKafkaAddr()+":"+ConfigUtil.getKafkaPort());
+    private static Logger logger = LoggerFactory.getLogger(KafkaStringSource.class);
+    private Properties properties;
+    public void init(){
+        properties.setProperty("bootstrap.servers", ConfigUtil.getKafkaAddr());
         properties.setProperty("key.deserializer",  ConfigUtil.getKeyDeserializer());
         properties.setProperty("value.deserializer",  ConfigUtil.getValueDeserializer());
         properties.setProperty("auto.offset.reset",   ConfigUtil.getAutoOffsetReset());
+    }
+
+    /**
+     * 初始化单流 kafkaStringSource
+     * 默认第一个
+     */
+    public DataStreamSource<String> initEnv(StreamExecutionEnvironment env){
+        init();
+        logger.info("当前输入流topic："+ Arrays.toString(ConfigUtil.getTopic()));
         DataStreamSource<String> kafkaSource = env.addSource(
-                new FlinkKafkaConsumer<>(ConfigUtil.getTopic(),
+                new FlinkKafkaConsumer<>(ConfigUtil.getTopic()[0],
                         new SimpleStringSchema(), properties));
         return kafkaSource;
+    }
+    /**
+     * 初始化多流 kafkaSource
+     */
+    public List<DataStreamSource<String>> initMultiEnv(StreamExecutionEnvironment env){
+        init();
+        logger.info("当前输入流topic："+ Arrays.toString(ConfigUtil.getTopic()));
+        List<DataStreamSource<String>> dataStreamSources = new ArrayList<>();
+        String[] topics = ConfigUtil.getTopic();
+        for (String topic : topics) {
+            DataStreamSource<String> source = env
+                    .addSource(new FlinkKafkaConsumer<>(topic, new SimpleStringSchema(), properties));
+            dataStreamSources.add(source);
+        }
+        return dataStreamSources;
     }
 }
