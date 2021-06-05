@@ -16,7 +16,7 @@ public class OrderEvent {
      */
     private String eventType;
     /**
-     * 支付id
+     * 唯一id
      */
     private String txId;
     /**
