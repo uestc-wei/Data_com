@@ -11,5 +11,5 @@
 
 
 
-支持多流，通过设置多个topic，默认按传入顺序构建source。
+支持多流，通过设置多个topic，默认按传入顺序构建source。通过topic名对应source
 
