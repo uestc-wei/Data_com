@@ -3,7 +3,9 @@ package com.wei.source;
 import com.wei.util.ConfigUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import lombok.AllArgsConstructor;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
@@ -44,16 +46,16 @@ public class KafkaStringSource {
     /**
      * 初始化多流 kafkaSource
      */
-    public List<DataStreamSource<String>> initMultiEnv(StreamExecutionEnvironment env){
+    public Map<String,DataStreamSource<String>> initMultiEnv(StreamExecutionEnvironment env){
         init();
         logger.info("当前输入流topic："+ Arrays.toString(ConfigUtil.getTopic()));
-        List<DataStreamSource<String>> dataStreamSources = new ArrayList<>();
+        Map<String,DataStreamSource<String>> dataStreamSourceMap = new HashMap<>();
         String[] topics = ConfigUtil.getTopic();
         for (String topic : topics) {
             DataStreamSource<String> source = env
                     .addSource(new FlinkKafkaConsumer<>(topic, new SimpleStringSchema(), properties));
-            dataStreamSources.add(source);
+            dataStreamSourceMap.put(topic,source);
         }
-        return dataStreamSources;
+        return dataStreamSourceMap;
     }
 }

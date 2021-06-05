@@ -2,6 +2,7 @@ package com.wei.util;
 
 import com.wei.source.KafkaStringSource;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import lombok.Data;
 import org.apache.flink.api.java.utils.ParameterTool;
@@ -31,7 +32,7 @@ public class DataSourceFactory {
      * @param env
      * @return
      */
-    public static List<DataStreamSource<String>> multiKafkaStringSource(StreamExecutionEnvironment env){
+    public static Map<String,DataStreamSource<String>> multiKafkaStringSource(StreamExecutionEnvironment env){
         KafkaStringSource kafkaStringSource =
                 new KafkaStringSource(new Properties());
         return kafkaStringSource.initMultiEnv(env);

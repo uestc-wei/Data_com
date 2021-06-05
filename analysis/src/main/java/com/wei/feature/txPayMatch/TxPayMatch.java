@@ -4,6 +4,7 @@ import com.wei.pojo.OrderEvent;
 import com.wei.pojo.ReceiptEvent;
 import com.wei.util.DataSourceFactory;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
@@ -33,9 +34,9 @@ public class TxPayMatch {
         //转换pojo
         //分别读取两条输出流
         DataSourceFactory.init(parameterTool);
-        List<DataStreamSource<String>> dataStreamSources = DataSourceFactory.multiKafkaStringSource(env);
-        DataStreamSource<String> orderEventSource  = dataStreamSources.get(0);
-        DataStreamSource<String> receiptEventSource = dataStreamSources.get(1);
+        Map<String,DataStreamSource<String>> dataStreamSources = DataSourceFactory.multiKafkaStringSource(env);
+        DataStreamSource<String> orderEventSource  = dataStreamSources.get("OrderEvent");
+        DataStreamSource<String> receiptEventSource = dataStreamSources.get("ReceiptEvent");
 
         //抽取对象
         //第一条流
