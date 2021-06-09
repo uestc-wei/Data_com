@@ -2,13 +2,13 @@
 # 基于flink的电商用户行为分析
 ## 项目模块
     主要分为两个模块：
-    ![20200602183018421](https://user-images.githubusercontent.com/53419323/121306439-6af5b480-c931-11eb-92f3-5c83c4d39367.png)
+    
 ## 代码结构
-   feature-算子
-   pojo-数据结构
-   sink-数据sink
-   source-数据源
-   util-工具
+   1. feature-算子
+   2. pojo-数据结构
+   3. sink-数据sink
+   4. source-数据源
+   5. util-工具
 ## 数据源：
     -1. kafka-支持多流，通过设置多个topic，默认按传入顺序构建source。通过topic获取对应source；
 ## 算子：
