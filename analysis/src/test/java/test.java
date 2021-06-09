@@ -1,0 +1,39 @@
+import com.wei.util.ConfigUtil;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+public class test {
+    private final Logger logger = LoggerFactory.getLogger(test.class);
+
+    @Test
+    public void test1(){
+        String s="true1";
+        try {
+            if (!s.equals("true")){
+                throw new Exception("不等于true");
+            }
+            System.out.println("还好执行吗");
+        }catch (Exception e){
+            System.out.println("出错了"+e);
+            logger.error("2222");
+        }
+
+        System.out.println("1111");
+    }
+    @Test
+    public void test2() throws ParseException {
+        String topics="test1,test2,test3";
+
+    }
+
+
+}
+
+
+
