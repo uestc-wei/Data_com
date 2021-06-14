@@ -12,7 +12,7 @@
    4. source-数据源
    5. util-工具
 ## 数据源：
-    -1. kafka-支持多流，通过设置多个topic，默认按传入顺序构建source。通过topic获取对应source；
+    -1. kafka-支持多流，通过设置多个topic，默认按传入顺序构建source。通过topic获取对应source；单个topic为设置里的第一个topic名。
 ## 算子：
    ### -实时统计分析
       -1.实时热门商品统计-getHotItem ProcessFunction+sql两种实现
