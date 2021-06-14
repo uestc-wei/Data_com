@@ -5,9 +5,9 @@ import static org.apache.flink.table.api.Expressions.$;
 import static org.apache.flink.table.api.Expressions.lit;
 
 import com.wei.pojo.UserBehavior;
-import com.wei.util.DataSourceFactory;
+import com.wei.source.DataSourceFactory;
 import java.util.concurrent.TimeUnit;
-import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -30,9 +30,9 @@ public class GetHotItemSql {
 
         //kafkaString source
         ParameterTool startUpParameterTool = ParameterTool.fromArgs(args);
-        StreamExecutionEnvironment env=StreamExecutionEnvironment.getExecutionEnvironment();
-        DataSourceFactory.init(startUpParameterTool);
-        DataStreamSource<String> source = DataSourceFactory.kafkaStringSource(env);
+        StreamExecutionEnvironment env = DataSourceFactory.getEnv();
+        DataStream<String> source = DataSourceFactory.createKafkaStream(startUpParameterTool,
+                SimpleStringSchema.class);
 
         //转换成pojo，分配时间戳和watermark
         source.map(line->{

@@ -3,6 +3,9 @@ package com.wei.util;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.common.functions.RuntimeContext;
@@ -51,6 +54,15 @@ public class ConfigUtil {
         return startUpParameterTool != null && StringUtils
                 .isNotBlank(startUpParameterTool.get(argName));
     }
+    /**
+     * 全局配置
+     */
+    public static Integer getParallelism(){
+        if (canGetFromSysArgs("parallelism")){
+            return startUpParameterTool.getInt("parallelism");
+        }
+        return parameterTool.getInt("parallelism");
+    }
 
     /**
      * kafka配置
@@ -64,11 +76,11 @@ public class ConfigUtil {
     }
 
     //支持传入多个topic
-    public static String[] getTopic(){
+    public static List<String> getTopic(){
         if (canGetFromSysArgs("topic")) {
-            return startUpParameterTool.get("topic").split(",");
+            return Arrays.asList(startUpParameterTool.get("topic").split(","));
         }
-        return parameterTool.get("topic").split(",");
+        return Arrays.asList(parameterTool.get("topic").split(","));
     }
     public static String getKeyDeserializer(){
         if (canGetFromSysArgs("key.deserializer")) {
@@ -87,6 +99,18 @@ public class ConfigUtil {
             return startUpParameterTool.get("auto.offset.reset");
         }
         return parameterTool.get("auto.offset.reset");
+    }
+    public static String getGroupId(){
+        if (canGetFromSysArgs("group.id")){
+            return startUpParameterTool.get("group.id");
+        }
+        return parameterTool.get("group.id");
+    }
+    public static String getEnableAutoCommit(){
+        if (canGetFromSysArgs("enable.auto.commit")){
+            return startUpParameterTool.get("enable.auto.commit");
+        }
+        return parameterTool.get("enable.auto.commit");
     }
 
     /**

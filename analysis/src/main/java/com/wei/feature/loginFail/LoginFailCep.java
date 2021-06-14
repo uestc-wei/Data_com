@@ -2,16 +2,18 @@ package com.wei.feature.loginFail;
 
 import com.wei.pojo.LoginEvent;
 import com.wei.pojo.LoginFailWarning;
-import com.wei.util.DataSourceFactory;
+import com.wei.source.DataSourceFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.cep.CEP;
 import org.apache.flink.cep.PatternSelectFunction;
 import org.apache.flink.cep.PatternStream;
 import org.apache.flink.cep.pattern.Pattern;
 import org.apache.flink.cep.pattern.conditions.SimpleCondition;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -21,14 +23,11 @@ import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWat
 
 public class LoginFailCep {
 
-    public static void main(String[] args) {
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(1);
-
-        ParameterTool parameterTool = ParameterTool.fromArgs(args);
-
-        DataSourceFactory.init(parameterTool);
-        DataStreamSource<String> source = DataSourceFactory.kafkaStringSource(env);
+    public static void main(String[] args) throws Exception{
+        ParameterTool startUpParameterTool = ParameterTool.fromArgs(args);
+        StreamExecutionEnvironment env = DataSourceFactory.getEnv();
+        DataStream<String> source = DataSourceFactory.createKafkaStream(startUpParameterTool,
+                SimpleStringSchema.class);
 
         //
         SingleOutputStreamOperator<LoginEvent> loginEventStream = source
@@ -58,7 +57,10 @@ public class LoginFailCep {
         PatternStream<LoginEvent> patternStream = CEP.pattern(loginEventStream.keyBy(LoginEvent::getUserId), failPattern);
 
         //3.检出符合匹配条件的复杂事件
-        patternStream.select(new LoginFailMatchDetectWarning());
+        SingleOutputStreamOperator<LoginFailWarning> warningStream = patternStream.select(new LoginFailMatchDetectWarning());
+        warningStream.print();
+        env.execute("login fail detect job");
+
     }
 
     public static class LoginFailMatchDetectWarning implements PatternSelectFunction<LoginEvent, LoginFailWarning>{

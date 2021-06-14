@@ -2,21 +2,20 @@ package com.wei.feature.txPayMatch;
 
 import com.wei.pojo.OrderEvent;
 import com.wei.pojo.ReceiptEvent;
-import com.wei.util.DataSourceFactory;
-import java.util.List;
+import com.wei.source.DataSourceFactory;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.streaming.api.datastream.DataStreamSource;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.co.CoProcessFunction;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.windowing.time.Time;
-import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter;
 import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter.Strategy;
 import org.apache.flink.util.Collector;
 import org.apache.flink.util.OutputTag;
@@ -26,17 +25,16 @@ public class TxPayMatch {
     //定义侧输出流标签
     private final static OutputTag<OrderEvent> unmatchedPays=new OutputTag<>("unmatched-pays");
     private final static OutputTag<ReceiptEvent> unmatchedReceipts=new OutputTag<>("unmatched-receipt");
-    public static void main(String[] args) {
-        ParameterTool parameterTool = ParameterTool.fromArgs(args);
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(4);
-
+    public static void main(String[] args) throws Exception{
         //转换pojo
         //分别读取两条输出流
-        DataSourceFactory.init(parameterTool);
-        Map<String,DataStreamSource<String>> dataStreamSources = DataSourceFactory.multiKafkaStringSource(env);
-        DataStreamSource<String> orderEventSource  = dataStreamSources.get("OrderEvent");
-        DataStreamSource<String> receiptEventSource = dataStreamSources.get("ReceiptEvent");
+        ParameterTool startUpParameterTool = ParameterTool.fromArgs(args);
+        StreamExecutionEnvironment env = DataSourceFactory.getEnv();
+        Map<String, DataStream<String>> multiKafkaStream = DataSourceFactory
+                .createMultiKafkaStream(startUpParameterTool,
+                        SimpleStringSchema.class);
+        DataStream<String> orderEventSource  = multiKafkaStream.get("OrderEvent");
+        DataStream<String> receiptEventSource = multiKafkaStream.get("ReceiptEvent");
 
         //抽取对象
         //第一条流

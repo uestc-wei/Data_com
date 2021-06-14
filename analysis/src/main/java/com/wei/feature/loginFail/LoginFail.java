@@ -2,16 +2,18 @@ package com.wei.feature.loginFail;
 
 import com.wei.pojo.LoginEvent;
 import com.wei.pojo.LoginFailWarning;
-import com.wei.util.DataSourceFactory;
+import com.wei.source.DataSourceFactory;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.common.state.ListState;
 import org.apache.flink.api.common.state.ListStateDescriptor;
 import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -24,13 +26,10 @@ import org.apache.flink.util.Collector;
 public class LoginFail {
 
     public static void main(String[] args) throws Exception {
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(1);
-
-        ParameterTool parameterTool = ParameterTool.fromArgs(args);
-
-        DataSourceFactory.init(parameterTool);
-        DataStreamSource<String> source = DataSourceFactory.kafkaStringSource(env);
+        ParameterTool startUpParameterTool = ParameterTool.fromArgs(args);
+        StreamExecutionEnvironment env = DataSourceFactory.getEnv();
+        DataStream<String> source = DataSourceFactory.createKafkaStream(startUpParameterTool,
+                SimpleStringSchema.class);
 
         //
         SingleOutputStreamOperator<LoginEvent> loginEventStream = source

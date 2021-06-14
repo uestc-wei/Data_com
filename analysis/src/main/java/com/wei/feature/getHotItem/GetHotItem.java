@@ -3,13 +3,14 @@ package com.wei.feature.getHotItem;
 
 import com.wei.pojo.ItemViewCount;
 import com.wei.pojo.UserBehavior;
-import com.wei.util.DataSourceFactory;
+import com.wei.source.DataSourceFactory;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.flink.api.common.functions.AggregateFunction;
+import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.common.state.ListState;
 import org.apache.flink.api.common.state.ListStateDescriptor;
 import org.apache.flink.api.java.utils.ParameterTool;
@@ -39,9 +40,9 @@ public class GetHotItem {
     public static void main(String[] args) throws Exception {
         //kafkaStringSource
         ParameterTool startUpParameterTool = ParameterTool.fromArgs(args);
-        StreamExecutionEnvironment env=StreamExecutionEnvironment.getExecutionEnvironment();
-        DataSourceFactory.init(startUpParameterTool);
-        DataStreamSource<String> source = DataSourceFactory.kafkaStringSource(env);
+        StreamExecutionEnvironment env = DataSourceFactory.getEnv();
+        DataStream<String> source = DataSourceFactory.createKafkaStream(startUpParameterTool,
+                SimpleStringSchema.class);
         /**transformation
          * 1.将字符流转成pojo
          * 2.抽取event_time

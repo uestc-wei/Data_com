@@ -2,11 +2,12 @@ package com.wei.feature.txPayMatch;
 
 import com.wei.pojo.OrderEvent;
 import com.wei.pojo.ReceiptEvent;
-import com.wei.util.DataSourceFactory;
+import com.wei.source.DataSourceFactory;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.java.utils.ParameterTool;
-import org.apache.flink.configuration.Configuration;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -21,14 +22,13 @@ import scala.Tuple2;
 public class TxPayMatchJoin {
 
     public static void main(String[] args) throws Exception {
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(1);
-        ParameterTool parameterTool = ParameterTool.fromArgs(args);
-        //source
-        DataSourceFactory.init(parameterTool);
-        Map<String,DataStreamSource<String>> dataStreamSources = DataSourceFactory.multiKafkaStringSource(env);
-        DataStreamSource<String> orderEventSource  = dataStreamSources.get("OrderEvent");
-        DataStreamSource<String> receiptEventSource = dataStreamSources.get("ReceiptEvent");
+        ParameterTool startUpParameterTool = ParameterTool.fromArgs(args);
+        StreamExecutionEnvironment env = DataSourceFactory.getEnv();
+        Map<String, DataStream<String>> multiKafkaStream = DataSourceFactory
+                .createMultiKafkaStream(startUpParameterTool,
+                        SimpleStringSchema.class);
+        DataStream<String> orderEventSource  = multiKafkaStream.get("OrderEvent");
+        DataStream<String> receiptEventSource = multiKafkaStream.get("ReceiptEvent");
 
         SingleOutputStreamOperator<OrderEvent> orderEventStream  = orderEventSource.map(line -> {
             String[] fields = line.split(",");

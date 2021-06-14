@@ -2,10 +2,11 @@ package com.wei.feature.orderPayTimeout;
 
 import com.wei.pojo.OrderEvent;
 import com.wei.pojo.OrderResult;
-import com.wei.util.DataSourceFactory;
+import com.wei.source.DataSourceFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.cep.CEP;
 import org.apache.flink.cep.PatternSelectFunction;
@@ -25,12 +26,10 @@ import org.apache.flink.util.OutputTag;
 public class OrderPayTimeoutCep {
 
     public static void main(String[] args) throws Exception {
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(1);
-        ParameterTool parameterTool = ParameterTool.fromArgs(args);
-
-        DataSourceFactory.init(parameterTool);
-        DataStreamSource<String> source = DataSourceFactory.kafkaStringSource(env);
+        ParameterTool startUpParameterTool = ParameterTool.fromArgs(args);
+        StreamExecutionEnvironment env = DataSourceFactory.getEnv();
+        DataStream<String> source = DataSourceFactory.createKafkaStream(startUpParameterTool,
+                SimpleStringSchema.class);
         DataStream<OrderEvent> orderEventDataStream = source
                 .map(line -> {
                     String[] fields = line.split(",");

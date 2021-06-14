@@ -4,17 +4,19 @@ package com.wei.feature.adStatisticsByProvince;
 import com.wei.pojo.AdClickEvent;
 import com.wei.pojo.AdCountViewByProvince;
 import com.wei.pojo.BlackListUserWarning;
-import com.wei.util.DataSourceFactory;
+import com.wei.source.DataSourceFactory;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.flink.api.common.functions.AggregateFunction;
+import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -27,7 +29,6 @@ import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter.Strategy;
 import org.apache.flink.util.Collector;
 import org.apache.flink.util.OutputTag;
-import org.apache.kafka.common.protocol.types.Field.Str;
 import scala.Tuple2;
 
 /**
@@ -38,13 +39,10 @@ import scala.Tuple2;
 public class AdStatisticsByProvince {
 
     public static void main(String[] args) throws Exception {
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(1);
-
-        ParameterTool parameterTool = ParameterTool.fromArgs(args);
-
-        DataSourceFactory.init(parameterTool);
-        DataStreamSource<String> source = DataSourceFactory.kafkaStringSource(env);
+        ParameterTool startUpParameterTool = ParameterTool.fromArgs(args);
+        StreamExecutionEnvironment env = DataSourceFactory.getEnv();
+        DataStream<String> source = DataSourceFactory.createKafkaStream(startUpParameterTool,
+                SimpleStringSchema.class);
 
         //
         SingleOutputStreamOperator<AdClickEvent> adClickEventStream = source.map(line -> {

@@ -2,13 +2,16 @@ package com.wei.feature.appMarketing;
 
 import com.wei.pojo.ChannelPromotionCount;
 import com.wei.pojo.MarketingUserBehavior;
-import com.wei.util.DataSourceFactory;
+import com.wei.source.DataSourceFactory;
 import java.sql.Timestamp;
 import java.util.concurrent.TimeUnit;
 import org.apache.flink.api.common.functions.AggregateFunction;
+import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.java.functions.KeySelector;
+import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -25,10 +28,9 @@ public class AppMarketingByChannel {
     public static void main(String[] args) throws Exception {
 
         ParameterTool startUpParameterTool = ParameterTool.fromArgs(args);
-        StreamExecutionEnvironment env=StreamExecutionEnvironment.getExecutionEnvironment();
-        DataSourceFactory.init(startUpParameterTool);
-        DataStreamSource<String> source = DataSourceFactory.kafkaStringSource(env);
-
+        StreamExecutionEnvironment env = DataSourceFactory.getEnv();
+        DataStream<String> source = DataSourceFactory.createKafkaStream(startUpParameterTool,
+                SimpleStringSchema.class);
         SingleOutputStreamOperator<MarketingUserBehavior> userBehaviorStream = source.map(line -> {
             String[] split = line.split(",");
             return new MarketingUserBehavior(new Long(split[0]),split[1],split[2],new Long(split[3]));
