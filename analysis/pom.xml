@@ -17,5 +17,15 @@
             <artifactId>jedis</artifactId>
             <version>3.5.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.15.6</version>
+        </dependency>
+        <dependency>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <groupId>org.elasticsearch.client</groupId>
+            <version>6.4.3</version>
+        </dependency>
     </dependencies>
 </project>

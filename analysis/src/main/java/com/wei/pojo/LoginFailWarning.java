@@ -23,4 +23,6 @@ public class LoginFailWarning {
      * 报警信息
      */
     private String warningMsg;
+
+
 }
