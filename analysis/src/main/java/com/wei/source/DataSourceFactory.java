@@ -37,7 +37,10 @@ public class DataSourceFactory {
         env.getConfig().setGlobalJobParameters(parameterTool);
         env.setParallelism(ConfigUtil.getParallelism());
     }
-
+    /*
+     * todo
+     *  这里配置有点问题
+     */
     public static Properties kafkaSetting(){
         Properties properties=new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,ConfigUtil.getKafkaAddr());

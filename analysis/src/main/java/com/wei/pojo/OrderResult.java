@@ -18,4 +18,5 @@ public class OrderResult {
      * 结果状态
      */
     private String resultState;
+
 }

@@ -2,6 +2,7 @@ package com.wei.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import scala.Tuple2;
 
 @AllArgsConstructor
 @Data

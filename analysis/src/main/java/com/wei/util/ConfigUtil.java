@@ -114,7 +114,66 @@ public class ConfigUtil {
     }
 
     /**
-     * es配置
-     * todo:
+     * flink配置
+     * @return
      */
+    public static long getCheckpointRetryTimeout(){
+        if (canGetFromSysArgs("CheckpointRetryTimeout")){
+            return startUpParameterTool.getLong("CheckpointRetryTimeout");
+        }
+        return parameterTool.getLong("CheckpointRetryTimeout");
+    }
+
+    /**
+     * es配置
+     *
+     */
+
+    public static String getEsHost(){
+        if (canGetFromSysArgs("esHost")){
+            return startUpParameterTool.get("esHost");
+        }
+        return parameterTool.get("esHost");
+    }
+
+    public static int getFlushEsThread(){
+        if (canGetFromSysArgs("flushEsThread")){
+            return startUpParameterTool.getInt("flushEsThread");
+        }
+        return parameterTool.getInt("flushEsThread");
+    }
+
+    public static int getEsBulkRequestMaxSize(){
+        if (canGetFromSysArgs("elasticSearch.bulkRequest.maxSize")){
+            return startUpParameterTool.getInt("elasticSearch.bulkRequest.maxSize");
+        }
+        return parameterTool.getInt("elasticSearch.bulkRequest.maxSize");
+    }
+
+    public static String getEsIndexName(){
+        if (canGetFromSysArgs("elasticSearch.index")){
+            return startUpParameterTool.get("elasticSearch.index");
+        }
+        return parameterTool.get("elasticSearch.index");
+    }
+
+    public static String getEsIndexTypeName(){
+        if (canGetFromSysArgs("elasticSearch.IndexType")){
+            return startUpParameterTool.get("elasticSearch.IndexType");
+        }
+        return parameterTool.get("elasticSearch.IndexType");
+    }
+    //0 同步，1 异步
+    public static int getFlushEsMode(){
+        if (canGetFromSysArgs("elasticSearch.flushEsMode")){
+            return startUpParameterTool.getInt("elasticSearch.flushEsMode");
+        }
+        return parameterTool.getInt("elasticSearch.flushEsMode");
+    }
+    public static int getEsNumOfShards() {
+        if (canGetFromSysArgs("elasticSearch.indexNumOfShards")) {
+            return startUpParameterTool.getInt("elasticSearch.indexNumOfShards");
+        }
+        return parameterTool.getInt("elasticSearch.indexNumOfShards");
+    }
 }
